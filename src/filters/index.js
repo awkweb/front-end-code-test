@@ -1,3 +1,3 @@
-export function formatNumber (string) {
-	return string
+export function prettyNumber (number) {
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
