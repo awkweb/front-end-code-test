@@ -174,6 +174,7 @@ export default {
     border: 0;
     color: palette(black);
     font: {
+      family: $sans-serif;
       size: .8rem;
     }
     flex: 3;

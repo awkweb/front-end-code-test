@@ -45,7 +45,9 @@
       </header>
 
       <chart
-        :data="chartData"
+        :total="chartData.total"
+        :data="chartData.bars"
+        :xLabel="chartData.xLabel"
       >
       </chart>
     </div>
@@ -103,17 +105,24 @@ export default {
     },
     retirementIncomeGap () {
       const retirementIncomeGoal = this.sections[0].fields[2].value
-      return retirementIncomeGoal - this.totalExistingIncome.value
+      return Math.max(retirementIncomeGoal - this.totalExistingIncome.value, 0)
     },
     personalPensionTarget () {
       return Math.round(this.retirementIncomeGap * (this.portionToFill.value / 100))
     },
     chartData () {
-      return [
-        { name: 'Retirement Income Gap', value: this.retirementIncomeGap },
-        { name: 'Personal Pension Target', value: this.personalPensionTarget },
-        { name: 'Total Existing Income', value: this.totalExistingIncome }
-      ]
+      const retirementIncomeGoal = this.sections[0].fields[2].value
+      const retirementAge = this.sections[0].fields[0].value
+      const retirementIncomeGap = this.portionToFill.value < 100 ? this.retirementIncomeGap : 0
+      return {
+        total: retirementIncomeGoal,
+        xLabel: retirementAge,
+        bars:[
+          { name: 'Retirement Income Gap', value: retirementIncomeGap, order: 1 },
+          { name: 'Personal Pension Target', value: this.personalPensionTarget, order: 2 },
+          { name: 'Total Existing Income', value: this.totalExistingIncome.value, order: 3 }
+        ]
+      }
     }
   },
 
@@ -132,7 +141,8 @@ export default {
       const sectionIndex = this.sections.findIndex(section => section.title === data.sectionTitle)
       const section = this.sections[sectionIndex]
       const fieldIndex = section.fields.findIndex(field => field.label === data.fieldLabel)
-      const randomAmount = Math.floor(Math.random() * (2000 - -2000 + 1)) + -2000;
+      const rangeMax = 5000
+      const randomAmount = Math.floor(Math.random() * (rangeMax - -rangeMax + 1)) + -rangeMax;
       this.sections[sectionIndex].fields[fieldIndex].showRefresh = false
       this.sections[sectionIndex].fields[fieldIndex].value += randomAmount
     }

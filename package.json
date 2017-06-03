@@ -9,7 +9,7 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
-    "d3": "^4.9.1",
+    "tween.js": "^16.6.0",
     "vue": "^2.3.3"
   },
   "devDependencies": {
