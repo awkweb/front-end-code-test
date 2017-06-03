@@ -1,26 +1,36 @@
 <template>
   <div
     class="number__field"
-    :class="{ active: isActive }"
-    @click="onClick">
-    <label class="number__field__label">{{ label }}</label>
+    :class="{ active: active, disabled: disabled }">
+    <div
+      @click="onClick"
+      class="number__field__container">
+      <label class="number__field__label">{{ label }}</label>
 
-    <input
-      class="number__field__input"
-      ref="input"
-      :placeholder="placeholder"
-      :autofocus="autofocus"
-      :value="value"
-      @input="onInput($event.target.value)"
-      @focus="onFocus"
-      @blur="onBlur"
-      type="number"
-      spellcheck="false">
+      <input
+        v-if="active && !disabled"
+        class="number__field__input"
+        ref="input"
+        :placeholder="placeholder"
+        :autofocus="autofocus"
+        :value="value"
+        @input="onInput($event.target.value)"
+        @focus="onFocus"
+        @blur="onBlur"
+        type="number"
+        spellcheck="false">
+      <span
+        v-else
+        :class="{ refreshable: showRefresh }"
+        class="number__field__input">
+        {{ displayValue | prettyNumber }}
+      </span>
+    </div>
 
     <button
       v-if="showRefresh"
-      @click="refreshField">
-      Refresh
+      @click.self="onRefreshField"
+      class="number__field__refresh">
     </button>
   </div>
 </template>
@@ -32,21 +42,46 @@ export default {
   props: {
     label: { type: String, required: true },
     value: { type: Number, default: 0, required: true },
+    autofocus: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
     placeholder: String,
-    autofocus: Boolean,
-    refreshable: Boolean,
+    refreshable: { type: Boolean, default: false },
+    showRefresh: { type: Boolean, default: false },
+    triggerRefresh: { type: Boolean, default: false },
+    type: String
   },
 
   data: () => ({
-    isActive: false,
-    showRefresh: false,
+    active: false,
     originalValue: null
   }),
 
+  computed: {
+    displayValue () {
+      let value;
+      switch (this.type) {
+        case 'currency':
+          value = `$${this.value}`
+          break
+        case 'percent':
+          value = `${this.value}%`
+          break 
+        default:
+          value = this.value    
+      }
+      return value
+    }
+  },
+
   methods: {
     onClick () {
-      const input = this.$el.children[1]
-      input.focus()
+      if (!this.disabled) {
+        this.active = true
+        setTimeout(() => {
+          const input = this.$el.children[0].children[1]
+          input.focus()
+        }, 0)
+      }
     },
 
     onInput (value) {
@@ -58,20 +93,19 @@ export default {
 
     onFocus (event) {
       this.originalValue = this.value
-      this.isActive = true
+      this.active = true
     },
 
     onBlur () {
-      if (this.refreshable && this.originalValue != null && this.originalValue != this.value) {
-        this.showRefresh = true
+      if (this.triggerRefresh && this.originalValue != null && this.originalValue != this.value) {
+        this.$emit('onTriggerRefresh')
       }
-      this.isActive = false
+      this.active = false
       this.$refs.input.value = this.value
     },
 
-    refreshField () {
-      this.showRefresh = false
-      this.$emit('refreshField')    
+    onRefreshField () {
+      this.$emit('onRefreshField', this.label)    
     }
   }
 }
@@ -85,22 +119,17 @@ export default {
   border: {
     style: solid;
     color: palette(gray, light);
+    radius: $border-radius;
     width: 1px;
   }
   box-shadow: $box-shadow;
   display: flex;
   flex: 1;
   margin-bottom: 14px;
-  padding: {
-    bottom: 8px;
-    right: 14px;
-    left: 14px;
-    top: 8px;
-  }
   position: relative;
   transition: border-color $transition;
 
-  &:hover {
+  &:not(.disabled):hover {
     border-color: palette(blue, light); 
   }
 
@@ -110,6 +139,22 @@ export default {
 
   &.active {
     border-color: palette(blue);
+  }
+
+  &.disabled {
+    background-color: palette(gray, x-light);
+    cursor: not-allowed;
+  }
+
+  &__container {
+    display: flex;
+    flex: 1;
+    padding: {
+      bottom: 8px;
+      right: 14px;
+      left: 14px;
+      top: 8px;
+    }
   }
 
   &__label {
@@ -135,10 +180,10 @@ export default {
     outline: 0;
     padding: 0;
     text-align: right;
+    transition: color $transition;
 
     &::placeholder {
       color: palette(gray);  
-      transition: color $transition;
     }
 
     &::-webkit-inner-spin-button, 
@@ -146,6 +191,28 @@ export default {
       -webkit-appearance: none; 
       margin: 0; 
     }
+
+    &.refreshable {
+      color: palette(gray);
+    }
+  }
+
+  &__refresh {
+    background: {
+      color: transparent;
+      image: url("../assets/icons/refresh.svg");
+      position: center center;
+      size: 35px;
+      repeat: no-repeat;
+    }
+    border: 0;
+    cursor: pointer;
+    height: 40px;
+    position: absolute;
+    outline: 0;
+    right: -2rem;
+    top: 0;
+    width: 40px;
   }
 }
 </style>

@@ -10,11 +10,17 @@
       v-for="field in fields"
       v-model.number="field.value"
       :key="field.label"
+      :autofocus="field.autofocus"
+      :disabled="field.disabled"
       :label="field.label"
       :placeholder="field.placeholder"
-      :autofocus="field.autofocus"
       :refreshable="field.refreshable"
-      @refreshField="refreshField">
+      :showRefresh="field.showRefresh"
+      :triggerRefresh="field.triggerRefresh"
+      :type="field.type"
+      @onRefreshField="onRefreshField"
+      @onTriggerRefresh="onTriggerRefresh"
+    >
     </number-field>
 
     <total-field
@@ -51,9 +57,13 @@ export default {
       this.$emit('input', value)
     },
 
-    refreshField () {
-      this.showRefresh = false
-      this.$emit('refreshField')    
+    onTriggerRefresh () {
+      this.$emit('onTriggerRefresh')
+    },
+
+    onRefreshField (label) {
+      const data = { sectionTitle: this.title, fieldLabel: label }
+      this.$emit('onRefreshField', data)    
     }
   }
 }

@@ -4,6 +4,8 @@
       <form-section
         :title="sections[0].title"
         :fields="sections[0].fields"
+        @onTriggerRefresh="onTriggerRefresh"
+        @onRefreshField="onRefreshField"
       >
       </form-section>
 
@@ -11,6 +13,7 @@
         :title="sections[1].title"
         :fields="sections[1].fields"
         :total="totalExistingIncome"
+        @onRefreshField="onRefreshField"
       >
       </form-section>
 
@@ -23,9 +26,11 @@
         </total-field>
 
         <number-field
-          v-model.number="portionToFill"
-          :label="'Portion To Fill'"
-          :placeholder="'100%'">
+          v-model.number="portionToFill.value"
+          :label="portionToFill.label"
+          :placeholder="portionToFill.placeholder"
+          :type="portionToFill.type"
+        >
         </number-field>
       </section>
     </form>
@@ -33,7 +38,7 @@
     <div class="app__chart">
       <header class="app__chart__header">
         <h1 class="app__chart__title">Personal Pension Target</h1>
-        <span class="app__chart__number">{{ personalPensionTarget | prettyNumber }}</span>
+        <span class="app__chart__number">${{ personalPensionTarget | prettyNumber }}</span>
       </header>
     </div>
   </div>
@@ -52,21 +57,21 @@ export default {
       {
         title: 'General Information',
         fields: [
-          { label: 'Retirement Age', value: 70, placeholder: '70', autofocus: true, refreshable: true },
-          { label: 'Spouse\'s Retirement Age', value: 71, placeholder: '71' },
-          { label: 'Retirement Income Goal', value: 28000, placeholder: '28000' }
+          { label: 'Retirement Age', value: 70, placeholder: '70', autofocus: true, triggerRefresh: true },
+          { label: 'Spouse Retirement Age', value: 71, placeholder: '71', disabled: true },
+          { label: 'Retirement Income Goal', value: 28000, placeholder: '28000', refreshable: true, showRefresh: false, type: 'currency' }
         ]
       },
       {
         title: 'Existing Income Sources',
         fields: [
-          { label: 'Social Security', value: 9000, placeholder: '9000' },
-          { label: 'Spouse\'s Social Security', value: 9000, placeholder: '9000' },
-          { label: 'Other Income Source(s)', value: 0, placeholder: '0' }
+          { label: 'Social Security', value: 9000, placeholder: '9000', refreshable: true, showRefresh: false, type: 'currency' },
+          { label: 'Spouse Social Security', value: 9000, placeholder: '9000', refreshable: true, showRefresh: false, type: 'currency' },
+          { label: 'Other Income Source(s)', value: 0, placeholder: '0', type: 'currency' }
         ]
       }
     ],
-    portionToFill: 100
+    portionToFill: { label: 'Portion To Fill', value: 100, placeholder: '100%', type: 'percent' },
   }),
 
   components: {
@@ -91,13 +96,28 @@ export default {
       return retirementIncomeGoal - this.totalExistingIncome.value
     },
     personalPensionTarget () {
-      return this.retirementIncomeGap * (this.portionToFill / 100)
+      return this.retirementIncomeGap * (this.portionToFill.value / 100)
     }
   },
 
   methods: {
-    refreshField () {
-      console.log('refresh field')
+    onTriggerRefresh () {
+      this.sections.forEach((section) => {
+        section.fields.forEach((field) => {
+          if (field.refreshable) {
+            field.showRefresh = true
+          }
+        })
+      })
+    },
+
+    onRefreshField (data) {
+      const sectionIndex = this.sections.findIndex(section => section.title === data.sectionTitle)
+      const section = this.sections[sectionIndex]
+      const fieldIndex = section.fields.findIndex(field => field.label === data.fieldLabel)
+      const randomAmount = Math.floor(Math.random() * (2000 - -2000 + 1)) + -2000;
+      this.sections[sectionIndex].fields[fieldIndex].showRefresh = false
+      this.sections[sectionIndex].fields[fieldIndex].value += randomAmount
     }
   }
 }
