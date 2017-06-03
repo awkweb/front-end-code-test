@@ -23,7 +23,7 @@ export default {
 .total__field {
   display: flex;
   flex: 1;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   padding: {
     bottom: 8px;
     right: 14px;
@@ -38,12 +38,10 @@ export default {
   &__label {
     color: palette(black);
     font: {
-      family: $sans-serif;
       size: .8rem;
       weight: 500;
     }
     flex: 7;
-    transition: color $transition;
   }
 
   &__value {
@@ -51,7 +49,6 @@ export default {
     border: 0;
     color: palette(black);
     font: {
-      family: $sans-serif;
       size: .8rem;
       weight: 500;
     }
@@ -59,17 +56,6 @@ export default {
     outline: 0;
     padding: 0;
     text-align: right;
-
-    &::placeholder {
-      color: palette(gray);  
-      transition: color $transition;
-    }
-
-    &::-webkit-inner-spin-button, 
-    &::-webkit-outer-spin-button { 
-      -webkit-appearance: none; 
-      margin: 0; 
-    }
   }
 }
 </style>

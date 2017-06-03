@@ -17,6 +17,7 @@
         @input="onInput($event.target.value)"
         @focus="onFocus"
         @blur="onBlur"
+        @keyup.enter="onBlur"
         type="number"
         spellcheck="false">
       <span
@@ -125,7 +126,7 @@ export default {
   box-shadow: $box-shadow;
   display: flex;
   flex: 1;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   position: relative;
   transition: border-color $transition;
 
@@ -147,25 +148,25 @@ export default {
   }
 
   &__container {
+    align-items: center;
     display: flex;
     flex: 1;
+    height: 38px;
     padding: {
-      bottom: 8px;
+      bottom: 0;
       right: 14px;
       left: 14px;
-      top: 8px;
+      top: 0;
     }
   }
 
   &__label {
     color: palette(black);
     font: {
-      family: $sans-serif;
       size: .8rem;
       weight: 500;
     }
     flex: 7;
-    transition: color $transition;
   }
 
   &__input {
@@ -173,7 +174,6 @@ export default {
     border: 0;
     color: palette(black);
     font: {
-      family: $sans-serif;
       size: .8rem;
     }
     flex: 3;

@@ -1,6 +1,9 @@
 <template>
   <div id="app" class="app">
-    <form class="app__form">
+    <form 
+      @submit.prevent
+      class="app__form"
+    >
       <form-section
         :title="sections[0].title"
         :fields="sections[0].fields"
@@ -19,11 +22,6 @@
 
       <section class="form-section">
         <span class="form-section__title">Pension Target</span>
-        
-        <total-field
-          :label="'Retirement Income Gap'"
-          :value="retirementIncomeGap">
-        </total-field>
 
         <number-field
           v-model.number="portionToFill.value"
@@ -32,6 +30,11 @@
           :type="portionToFill.type"
         >
         </number-field>
+
+        <total-field
+          :label="'Retirement Income Gap'"
+          :value="retirementIncomeGap">
+        </total-field>
       </section>
     </form>
 
@@ -40,6 +43,11 @@
         <h1 class="app__chart__title">Personal Pension Target</h1>
         <span class="app__chart__number">${{ personalPensionTarget | prettyNumber }}</span>
       </header>
+
+      <chart
+        :data="chartData"
+      >
+      </chart>
     </div>
   </div>
 </template>
@@ -48,6 +56,7 @@
 import FormSection from './components/FormSection.vue'
 import TotalField from './components/TotalField.vue'
 import NumberField from './components/NumberField.vue'
+import Chart from './components/Chart.vue'
 
 export default {
   name: 'app',
@@ -77,7 +86,8 @@ export default {
   components: {
     FormSection,
     TotalField,
-    NumberField
+    NumberField,
+    Chart
   },
 
   computed: {
@@ -96,7 +106,14 @@ export default {
       return retirementIncomeGoal - this.totalExistingIncome.value
     },
     personalPensionTarget () {
-      return this.retirementIncomeGap * (this.portionToFill.value / 100)
+      return Math.round(this.retirementIncomeGap * (this.portionToFill.value / 100))
+    },
+    chartData () {
+      return [
+        { name: 'Retirement Income Gap', value: this.retirementIncomeGap },
+        { name: 'Personal Pension Target', value: this.personalPensionTarget },
+        { name: 'Total Existing Income', value: this.totalExistingIncome }
+      ]
     }
   },
 
@@ -157,6 +174,9 @@ body {
 }
 
 .app__chart {
+  display: flex;
+  flex-direction: column;
+
   &__header {
     align-items: center;
     display: flex;
