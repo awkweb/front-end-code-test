@@ -15,9 +15,15 @@
             {{ bar.name }}
           </span>
         </div>
+
+        <div class="chart__y-label">
+          <span class="chart__y-label__value">${{ this.total | nFormatter }} per month</span>
+          <span class="chart__y-label__name">Retirement Income Goal</span>
+        </div>
       </div>
     </div>
-    <span class="chart__x-label">Age {{ this.xLabel }}</span>
+
+    <span class="chart__x-label">{{ this.xLabel }}</span>
   </div>
 </template>
 
@@ -32,7 +38,7 @@ export default {
   props: {
     total: { type: Number, required: true },
     data: { type: Array, required: true },
-    xLabel: Number
+    xLabel: { type: String, required: true }
   },
 
   methods: {
@@ -59,6 +65,11 @@ export default {
   flex: 1;
   flex-direction: column;
   margin: 2rem;
+  position: relative;
+
+  @media screen and (max-width: screen(medium)) {
+    margin: 1rem;
+  }
 
   &__container {
     border-bottom: {
@@ -67,8 +78,7 @@ export default {
       width: 1px;
     }
     height: 100%;
-    max-width: 300px;
-    width: 100%;
+    width: 300px;
 
     @media screen and (max-width: screen(large)) {
       height: 400px;
@@ -80,6 +90,7 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100%;
+    position: relative;
 
     @media screen and (max-width: screen(large)) {
       height: 400px;
@@ -104,13 +115,13 @@ export default {
         size: .75rem;
       }
       position: absolute;
-      left: -9.5rem;
+      left: -9rem;
       text-align: right;
       width: 160px;
 
-      &:after{
+      &:after {
         content: '';
-        width: 30px;
+        width: 20px;
         border-bottom: {
           color: palette(gray, dark);
           style: solid;
@@ -120,15 +131,39 @@ export default {
         top: 50%;
         margin-left: 5px;
       }
+      
+      @media screen and (max-width: screen(medium)) {
+        font-size: .7rem;
+        left: -5.5rem;
+        width: 100px;
+      }
+    }
+  }
+
+  &__y-label {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: -11rem;
+    top: 40%;
+    width: 100%;
+
+    &__name {
+      font-size: .75rem;
+    }
+
+    @media screen and (max-width: screen(medium)) {      
+      right: -.2rem;
+      width: 30%;
+
+      &__name {
+        font-size: .7rem;
+      }
     }
   }
 
   &__x-label {
-    font: {
-      family: $sans-serif;
-      size: .8rem;
-      weight: 500;
-    }
+    font-size: .8rem;
     padding: .5rem;
   }
 }

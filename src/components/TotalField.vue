@@ -43,6 +43,13 @@ export default {
     top: 6px;
   }
 
+  @media screen and (max-width: screen(small)) {
+    padding: {
+      right: 7px;
+      left: 7px;
+    }
+  }
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -54,6 +61,10 @@ export default {
       weight: 400;
     }
     flex: 7;
+
+    @media screen and (max-width: screen(small)) {
+      font-size: .75rem;
+    }
   }
 
   &__value {
@@ -68,6 +79,10 @@ export default {
     outline: 0;
     padding: 0;
     text-align: right;
+
+    @media screen and (max-width: screen(small)) {
+      font-size: .75rem;
+    }
   }
 
   .grand {

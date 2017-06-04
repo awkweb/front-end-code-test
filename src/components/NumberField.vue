@@ -4,15 +4,17 @@
     :class="{ active: active, disabled: disabled }">
     <div
       @click="onClick"
+      :class="{ refreshable: showRefresh }"
       class="number__field__container">
       <label class="number__field__label">{{ label }}</label>
 
       <input
-        v-if="active && !disabled"
         class="number__field__input"
         ref="input"
-        :placeholder="placeholder"
         :autofocus="autofocus"
+        :class="{ refreshable: showRefresh }"
+        :disabled="disabled"
+        :placeholder="placeholder"
         :value="value"
         @input="onInput($event.target.value)"
         @focus="onFocus"
@@ -20,29 +22,26 @@
         @keyup.enter="onBlur"
         type="text"
         spellcheck="false">
-      <span
-        v-else
-        :class="{ refreshable: showRefresh }"
-        class="number__field__input">
-        {{ displayValue | prettyNumber }}
-      </span>
-    </div>
 
-    <button
-      v-if="showRefresh"
-      @click.self="onRefreshField"
-      class="number__field__refresh">
-    </button>
+      <button
+        v-if="showRefresh"
+        @click.self="onRefreshField"
+        tabindex="100"
+        class="number__field__refresh">
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
+import { formatMixin } from '../mixins'
+
 export default {
   name: 'number-field',
 
   props: {
     label: { type: String, required: true },
-    value: { type: Number, default: 0, required: true },
+    value: { type: [String, Number], default: 0, required: true },
     autofocus: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     placeholder: String,
@@ -57,21 +56,12 @@ export default {
     originalValue: null
   }),
 
-  computed: {
-    displayValue () {
-      let value;
-      switch (this.type) {
-        case 'currency':
-          value = `$${this.value}`
-          break
-        case 'percent':
-          value = `${this.value}%`
-          break 
-        default:
-          value = this.value    
-      }
-      return value
-    }
+  mixins: [
+    formatMixin
+  ],
+
+  mounted () {
+    this.onInput(this.value)
   },
 
   methods: {
@@ -86,11 +76,11 @@ export default {
     },
 
     onInput (value) {
-      const formattedValue = value.replace(/(^0+)|[^0-9]+/g, '')
+      const formattedValue = this.formatValue(value, this.type)
       if (formattedValue !== value) {
         this.$refs.input.value = formattedValue
       }
-      this.$emit('input', Number(formattedValue))
+      this.$emit('input', formattedValue)
     },
 
     onFocus (event) {
@@ -146,6 +136,10 @@ export default {
   &.disabled {
     background-color: palette(gray, x-light);
     cursor: not-allowed;
+
+    * {
+      cursor: not-allowed;
+    }
   }
 
   &__container {
@@ -157,6 +151,19 @@ export default {
       right: 14px;
       left: 14px;
     }
+
+    &.refreshable {
+      @media screen and (max-width: screen(large)) {
+        padding-right: 0;
+      }
+    }
+
+    @media screen and (max-width: screen(small)) {
+      padding: {
+        right: 7px;
+        left: 7px;
+      }
+    }
   }
 
   &__label {
@@ -165,7 +172,11 @@ export default {
       size: .8rem;
       weight: 400;
     }
-    flex: 7;
+    flex: 1;
+
+    @media screen and (max-width: screen(small)) {
+      font-size: .75rem;
+    }
   }
 
   &__input {
@@ -176,20 +187,18 @@ export default {
       family: $sans-serif;
       size: .8rem;
     }
-    flex: 3;
     outline: 0;
     padding: 0;
     text-align: right;
     transition: color $transition;
+    width: 100px;
 
     &::placeholder {
       color: palette(gray);  
     }
 
-    &::-webkit-inner-spin-button, 
-    &::-webkit-outer-spin-button { 
-      -webkit-appearance: none; 
-      margin: 0; 
+    @media screen and (max-width: screen(small)) {
+      font-size: .75rem;
     }
 
     &.refreshable {
@@ -207,12 +216,17 @@ export default {
     }
     border: 0;
     cursor: pointer;
-    height: 40px;
+    height: 36px;
+    padding: 0;
     position: absolute;
     outline: 0;
     right: -2rem;
-    top: 0;
-    width: 40px;
+    top: 2px;
+    width: 36px;
+
+    @media screen and (max-width: screen(large)) {
+      position: initial;
+    }
   }
 }
 </style>

@@ -83,6 +83,10 @@ export default {
       weight: 600;
     }
     margin-bottom: .5rem;
+
+    @media screen and (max-width: screen(medium)) {
+      font-size: .9rem;
+    }
   }
 }
 </style>

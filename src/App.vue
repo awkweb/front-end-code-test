@@ -50,6 +50,7 @@
       <header class="app__chart__header">
         <h1 class="app__chart__title">Personal Pension Target</h1>
         <span class="app__chart__number">{{ (animatedPersonalPentionTarget == 0 ? personalPensionTarget : animatedPersonalPentionTarget) | prettyNumber }}</span>
+        <span>per month</span>
       </header>
 
       <chart
@@ -64,6 +65,7 @@
 
 <script>
 import TWEEN from 'tween.js'
+import { formatMixin } from './mixins'
 import FormSection from './components/FormSection.vue'
 import TotalField from './components/TotalField.vue'
 import NumberField from './components/NumberField.vue'
@@ -95,6 +97,10 @@ export default {
     animatedPersonalPentionTarget: 0
   }),
 
+  mixins: [
+    formatMixin
+  ],
+
   components: {
     FormSection,
     TotalField,
@@ -109,24 +115,29 @@ export default {
         let previousValue = previous.value || previous
         previousValue = previousValue || 0
         const currentValue = current.value || 0
-        return parseInt(previousValue) + currentValue
+        return this.toNumber(previousValue) + this.toNumber(currentValue)
       })
       return { label: 'Total Existing Income', value: value }
     },
+    
     retirementIncomeGap () {
-      const retirementIncomeGoal = this.sections[0].fields[2].value
+      const retirementIncomeGoal = this.toNumber(this.sections[0].fields[2].value)
       return Math.max(retirementIncomeGoal - this.totalExistingIncome.value, 0)
     },
+
     personalPensionTarget () {
-      return Math.round(this.retirementIncomeGap * (this.portionToFill.value / 100))
+      const portionToFill = this.toNumber(this.portionToFill.value)
+      return Math.round(this.retirementIncomeGap * (portionToFill / 100))
     },
+
     chartData () {
-      const retirementIncomeGoal = this.sections[0].fields[2].value
-      const retirementAge = this.sections[0].fields[0].value
-      const retirementIncomeGap = this.portionToFill.value < 100 ? this.retirementIncomeGap : 0
+      const retirementIncomeGoal = this.toNumber(this.sections[0].fields[2].value)
+      const retirementAge = this.toNumber(this.sections[0].fields[0].value)
+      const portionToFill = this.toNumber(this.portionToFill.value)
+      const retirementIncomeGap = portionToFill < 100 ? this.retirementIncomeGap : 0
       return {
-        total: retirementIncomeGoal,
-        xLabel: retirementAge,
+        total: this.toNumber(retirementIncomeGoal),
+        xLabel: `Age ${retirementAge}`,
         bars:[
           { name: 'Retirement Income Gap', value: retirementIncomeGap, order: 1 },
           { name: 'Personal Pension Target', value: this.personalPensionTarget, order: 2 },
@@ -171,10 +182,16 @@ export default {
       const sectionIndex = this.sections.findIndex(section => section.title === data.sectionTitle)
       const section = this.sections[sectionIndex]
       const fieldIndex = section.fields.findIndex(field => field.label === data.fieldLabel)
-      const rangeMax = 5000
+      const rangeMax = 2000
       const randomAmount = Math.floor(Math.random() * (rangeMax - -rangeMax + 1)) + -rangeMax;
+      const field = this.sections[sectionIndex].fields[fieldIndex]
+      const newValue = Math.max(this.toNumber(field.value) + randomAmount, 0)
       this.sections[sectionIndex].fields[fieldIndex].showRefresh = false
-      this.sections[sectionIndex].fields[fieldIndex].value += randomAmount
+      this.sections[sectionIndex].fields[fieldIndex].value = this.formatValue(newValue, field.type)
+    },
+
+    toNumber (value) {
+      return parseInt(value.toString().replace(/(^0{2,})|([^0-9]+)/g, ''))
     }
   }
 }
@@ -214,6 +231,22 @@ body {
 .app__form {
   flex: 1;
   padding: 2rem;
+
+  @media screen and (max-width: screen(larger)) {
+    padding: {
+      left: 0;
+      right: 0;
+    }
+  }
+
+  @media screen and (max-width: screen(large)) {
+    padding: {
+      bottom: .5rem;
+      left: 0;
+      right: 0;
+      top: 1rem;
+    }
+  }
 }
 
 .app__chart {
@@ -221,6 +254,15 @@ body {
   flex: 1;
   flex-direction: column;
   padding: 2rem;
+
+  @media screen and (max-width: screen(large)) {
+    padding: {
+      bottom: .5rem;
+      left: 0;
+      right: 0;
+      top: .5rem;
+    }
+  }
 
   &__header {
     align-items: center;
@@ -237,6 +279,10 @@ body {
       top: 0;
       bottom: 1.5rem;
     }
+
+    @media screen and (max-width: screen(medium)) {
+      font-size: .9rem;
+    }
   }
 
   &__number {
@@ -247,6 +293,10 @@ body {
     }
     position: relative;
 
+    @media screen and (max-width: screen(medium)) {
+      font-size: 3rem;
+    }
+
     &:before {
       color: palette(blue, light);
       content: "$";
@@ -254,6 +304,11 @@ body {
       position: absolute;
       left: -1.5rem;
       top: 1rem;
+
+      @media screen and (max-width: screen(medium)) {
+        font-size: 1.6rem;
+        top: .75rem;
+      }
     }
   }
 }
