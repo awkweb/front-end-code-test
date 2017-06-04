@@ -8,11 +8,11 @@
     
     <number-field
       v-for="field in fields"
-      v-model.number="field.value"
+      v-model="field.value"
       :key="field.label"
+      :label="field.label"
       :autofocus="field.autofocus"
       :disabled="field.disabled"
-      :label="field.label"
       :placeholder="field.placeholder"
       :refreshable="field.refreshable"
       :showRefresh="field.showRefresh"
@@ -26,7 +26,8 @@
     <total-field
       v-if="total"
       :label="total.label"
-      :value="total.value">
+      :value="total.value"
+    >
     </total-field>
   </section>
 </template>
@@ -51,9 +52,6 @@ export default {
 
   methods: {
     onInput (value) {
-      if (value === "") {
-        value = 0
-      }
       this.$emit('input', value)
     },
 

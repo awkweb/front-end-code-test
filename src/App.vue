@@ -23,8 +23,15 @@
       <section class="form-section">
         <span class="form-section__title">Pension Target</span>
 
+        <total-field
+          :label="'Retirement Income Gap'"
+          :value="retirementIncomeGap"
+          :grandTotal="false"
+        >
+        </total-field>
+
         <number-field
-          v-model.number="portionToFill.value"
+          v-model="portionToFill.value"
           :label="portionToFill.label"
           :placeholder="portionToFill.placeholder"
           :type="portionToFill.type"
@@ -32,8 +39,9 @@
         </number-field>
 
         <total-field
-          :label="'Retirement Income Gap'"
-          :value="retirementIncomeGap">
+          :label="'Personal Pension Target'"
+          :value="personalPensionTarget"
+        >
         </total-field>
       </section>
     </form>
@@ -41,7 +49,7 @@
     <div class="app__chart">
       <header class="app__chart__header">
         <h1 class="app__chart__title">Personal Pension Target</h1>
-        <span class="app__chart__number">${{ personalPensionTarget | prettyNumber }}</span>
+        <span class="app__chart__number">{{ (animatedPersonalPentionTarget == 0 ? personalPensionTarget : animatedPersonalPentionTarget) | prettyNumber }}</span>
       </header>
 
       <chart
@@ -55,6 +63,7 @@
 </template>
 
 <script>
+import TWEEN from 'tween.js'
 import FormSection from './components/FormSection.vue'
 import TotalField from './components/TotalField.vue'
 import NumberField from './components/NumberField.vue'
@@ -83,6 +92,7 @@ export default {
       }
     ],
     portionToFill: { label: 'Portion To Fill', value: 100, placeholder: '100%', type: 'percent' },
+    animatedPersonalPentionTarget: 0
   }),
 
   components: {
@@ -123,6 +133,26 @@ export default {
           { name: 'Total Existing Income', value: this.totalExistingIncome.value, order: 3 }
         ]
       }
+    }
+  },
+
+  watch: {
+    personalPensionTarget (newValue, oldValue) {
+      let vm = this
+      let animationFrame
+      const animate = (time) => {
+        TWEEN.update(time)
+        animationFrame = requestAnimationFrame(animate)
+      }
+      new TWEEN.Tween({ tweeningNumber: oldValue })
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .to({ tweeningNumber: newValue }, 500)
+        .onUpdate(function () {
+          vm.animatedPersonalPentionTarget = this.tweeningNumber.toFixed(0)
+        })
+        .onComplete(() => cancelAnimationFrame(animationFrame))
+        .start()
+      animationFrame = requestAnimationFrame(animate)
     }
   },
 
@@ -171,21 +201,26 @@ body {
 .app {
   color: palette(black);
   display: flex;
-  min-height: 100vh;
+  padding: {
+    left: 1rem;
+    right: 1rem;
+  }
 
   @media screen and (max-width: screen(large)) {
     flex-direction: column;
   }
+}
 
-  &__form, &__chart {
-    flex: 1;
-    padding: 2rem;
-  }
+.app__form {
+  flex: 1;
+  padding: 2rem;
 }
 
 .app__chart {
   display: flex;
+  flex: 1;
   flex-direction: column;
+  padding: 2rem;
 
   &__header {
     align-items: center;
@@ -208,9 +243,18 @@ body {
     color: palette(blue);
     font: {
       size: 4rem;
-      weight: 400;
+      weight: 300;
     }
-    letter-spacing: 3px;
+    position: relative;
+
+    &:before {
+      color: palette(blue, light);
+      content: "$";
+      font-size: 2rem;
+      position: absolute;
+      left: -1.5rem;
+      top: 1rem;
+    }
   }
 }
 </style>

@@ -18,7 +18,7 @@
         @focus="onFocus"
         @blur="onBlur"
         @keyup.enter="onBlur"
-        type="number"
+        type="text"
         spellcheck="false">
       <span
         v-else
@@ -86,10 +86,11 @@ export default {
     },
 
     onInput (value) {
-      if (value === "") {
-        value = 0
+      const formattedValue = value.replace(/(^0+)|[^0-9]+/g, '')
+      if (formattedValue !== value) {
+        this.$refs.input.value = formattedValue
       }
-      this.$emit('input', value)
+      this.$emit('input', Number(formattedValue))
     },
 
     onFocus (event) {
@@ -153,10 +154,8 @@ export default {
     flex: 1;
     height: 38px;
     padding: {
-      bottom: 0;
       right: 14px;
       left: 14px;
-      top: 0;
     }
   }
 
@@ -164,7 +163,7 @@ export default {
     color: palette(black);
     font: {
       size: .8rem;
-      weight: 500;
+      weight: 400;
     }
     flex: 7;
   }

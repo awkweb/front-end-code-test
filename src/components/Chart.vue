@@ -9,7 +9,7 @@
           class="chart__bar"
         >
           <span
-            v-show="(bar.value / total) > .1"
+            :class="{ outside: (bar.value / total) < .25 }"
             class="chart__bar__name"
           >
             {{ bar.name }}
@@ -37,9 +37,11 @@ export default {
 
   methods: {
     getBarStyle (bar, index) {
+      const percent = (bar.value / this.total) * 100
+      const height = Math.max(percent, 1)
       return {
         backgroundColor: this.backgroundColors[index],
-        height: `${(bar.value / this.total) * 100}%`,
+        height: `${height}%`,
         width: '100px'
       }
     }
@@ -86,9 +88,10 @@ export default {
 
   &__bar { 
     align-items: center;
-    color: palette(white);
+    color: palette(black);
     display: flex;
-    text-align: center;
+    position: relative;
+    text-align: left;
 
     &:first-child {
       border-top-right-radius: $border-radius;
@@ -98,7 +101,24 @@ export default {
     &__name {
       font: {
         family: $sans-serif;
-        size: .8rem;
+        size: .75rem;
+      }
+      position: absolute;
+      left: -9.5rem;
+      text-align: right;
+      width: 160px;
+
+      &:after{
+        content: '';
+        width: 30px;
+        border-bottom: {
+          color: palette(gray, dark);
+          style: solid;
+          width: 1px
+        }
+        position: absolute;
+        top: 50%;
+        margin-left: 5px;
       }
     }
   }
