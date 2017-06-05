@@ -5,16 +5,16 @@
       class="app__form"
     >
       <form-section
-        :title="sections[0].title"
-        :fields="sections[0].fields"
+        :title="'General Information'"
+        :fields="[fields.retirementAge, fields.spouseRetirementAge, fields.retirementIncomeGoal]"
         @onTriggerRefresh="onTriggerRefresh"
         @onRefreshField="onRefreshField"
       >
       </form-section>
 
       <form-section
-        :title="sections[1].title"
-        :fields="sections[1].fields"
+        :title="'Existing Income Sources'"
+        :fields="[fields.socialSecurity, fields.spouseSocialSecurity, fields.otherIncomeSources]"
         :total="totalExistingIncome"
         @onRefreshField="onRefreshField"
       >
@@ -31,10 +31,10 @@
         </total-field>
 
         <number-field
-          v-model="portionToFill.value"
-          :label="portionToFill.label"
-          :placeholder="portionToFill.placeholder"
-          :type="portionToFill.type"
+          v-model="fields.portionToFill.value"
+          :label="fields.portionToFill.label"
+          :placeholder="fields.portionToFill.placeholder"
+          :type="fields.portionToFill.type"
         >
         </number-field>
 
@@ -75,25 +75,15 @@ export default {
   name: 'app',
 
   data: () => ({
-    sections: [
-      {
-        title: 'General Information',
-        fields: [
-          { label: 'Retirement Age', value: 70, placeholder: '70', autofocus: true, triggerRefresh: true },
-          { label: 'Spouse Retirement Age', value: 71, placeholder: '71', disabled: true },
-          { label: 'Retirement Income Goal', value: 28000, placeholder: '28000', refreshable: true, showRefresh: false, type: 'currency' }
-        ]
-      },
-      {
-        title: 'Existing Income Sources',
-        fields: [
-          { label: 'Social Security', value: 9000, placeholder: '9000', refreshable: true, showRefresh: false, type: 'currency' },
-          { label: 'Spouse Social Security', value: 9000, placeholder: '9000', refreshable: true, showRefresh: false, type: 'currency' },
-          { label: 'Other Income Source(s)', value: 0, placeholder: '0', type: 'currency' }
-        ]
-      }
-    ],
-    portionToFill: { label: 'Portion To Fill', value: 100, placeholder: '100%', type: 'percent' },
+    fields: {
+      retirementAge: { label: 'Retirement Age', value: 70, placeholder: '70', autofocus: true, triggerRefresh: true },
+      spouseRetirementAge: { label: 'Spouse Retirement Age', value: 71, placeholder: '71', disabled: true },
+      retirementIncomeGoal: { label: 'Retirement Income Goal', value: 28000, placeholder: '28000', refreshable: true, showRefresh: false, type: 'currency' },
+      socialSecurity: { label: 'Social Security', value: 9000, placeholder: '9000', refreshable: true, showRefresh: false, type: 'currency' },
+      spouseSocialSecurity: { label: 'Spouse Social Security', value: 9000, placeholder: '9000', refreshable: true, showRefresh: false, type: 'currency' },
+      otherIncomeSources: { label: 'Other Income Source(s)', value: 0, placeholder: '0', type: 'currency' },
+      portionToFill: { label: 'Portion To Fill', value: 100, placeholder: '100%', type: 'percent' }
+    },
     animatedPersonalPentionTarget: 0
   }),
 
@@ -110,30 +100,29 @@ export default {
 
   computed: {
     totalExistingIncome () {
-      const existingIncomeSources = this.sections[1].fields
-      const value = existingIncomeSources.reduce((previous, current) => {
-        let previousValue = previous.value || previous
-        previousValue = previousValue || 0
-        const currentValue = current.value || 0
-        return this.toNumber(previousValue) + this.toNumber(currentValue)
-      })
+      const existingIncomeSources = [
+        this.toNumber(this.fields.socialSecurity.value),
+        this.toNumber(this.fields.spouseSocialSecurity.value),
+        this.toNumber(this.fields.otherIncomeSources.value)
+      ]
+      const value = existingIncomeSources.reduce((previous, current) => previous + current)
       return { label: 'Total Existing Income', value: value }
     },
     
     retirementIncomeGap () {
-      const retirementIncomeGoal = this.toNumber(this.sections[0].fields[2].value)
+      const retirementIncomeGoal = this.toNumber(this.fields.retirementIncomeGoal.value)
       return Math.max(retirementIncomeGoal - this.totalExistingIncome.value, 0)
     },
 
     personalPensionTarget () {
-      const portionToFill = this.toNumber(this.portionToFill.value)
+      const portionToFill = this.toNumber(this.fields.portionToFill.value)
       return Math.round(this.retirementIncomeGap * (portionToFill / 100))
     },
 
     chartData () {
-      const retirementIncomeGoal = this.toNumber(this.sections[0].fields[2].value)
-      const retirementAge = this.toNumber(this.sections[0].fields[0].value)
-      const portionToFill = this.toNumber(this.portionToFill.value)
+      const retirementIncomeGoal = this.toNumber(this.fields.retirementIncomeGoal.value)
+      const retirementAge = this.toNumber(this.fields.retirementAge.value)
+      const portionToFill = this.toNumber(this.fields.portionToFill.value)
       const retirementIncomeGap = portionToFill < 100 ? this.retirementIncomeGap : 0
       return {
         total: this.toNumber(retirementIncomeGoal),
@@ -169,25 +158,21 @@ export default {
 
   methods: {
     onTriggerRefresh () {
-      this.sections.forEach((section) => {
-        section.fields.forEach((field) => {
-          if (field.refreshable) {
-            field.showRefresh = true
-          }
-        })
+      Object.keys(this.fields).forEach((key) => {
+        let field = this.fields[key]
+        if (field.refreshable) {
+          this.fields[key].showRefresh = true
+        }
       })
     },
 
-    onRefreshField (data) {
-      const sectionIndex = this.sections.findIndex(section => section.title === data.sectionTitle)
-      const section = this.sections[sectionIndex]
-      const fieldIndex = section.fields.findIndex(field => field.label === data.fieldLabel)
+    onRefreshField (fieldKey) {
       const rangeMax = 2000
       const randomAmount = Math.floor(Math.random() * (rangeMax + rangeMax + 1)) - rangeMax
-      const field = this.sections[sectionIndex].fields[fieldIndex]
+      const field = this.fields[fieldKey]
       const newValue = Math.max(this.toNumber(field.value) + randomAmount, 0)
-      this.sections[sectionIndex].fields[fieldIndex].showRefresh = false
-      this.sections[sectionIndex].fields[fieldIndex].value = this.formatValue(newValue, field.type)
+      this.fields[fieldKey].showRefresh = false
+      this.fields[fieldKey].value = this.formatValue(newValue, field.type)
     },
 
     toNumber (value) {

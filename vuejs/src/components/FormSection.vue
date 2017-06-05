@@ -52,6 +52,7 @@ export default {
 
   methods: {
     onInput (value) {
+      console.log(value)
       this.$emit('input', value)
     },
 
@@ -59,9 +60,8 @@ export default {
       this.$emit('onTriggerRefresh')
     },
 
-    onRefreshField (label) {
-      const data = { sectionTitle: this.title, fieldLabel: label }
-      this.$emit('onRefreshField', data)    
+    onRefreshField (fieldKey) {
+      this.$emit('onRefreshField', fieldKey)    
     }
   }
 }

@@ -96,7 +96,16 @@ export default {
     },
 
     onRefreshField () {
-      this.$emit('onRefreshField', this.label)    
+      const fieldKey = this.toCamelCase(this.label)
+      this.$emit('onRefreshField', fieldKey)    
+    },
+
+    toCamelCase (string) {
+      return string
+          .replace(/\s(.)/g, ($1) => $1.toUpperCase())
+          .replace(/\s/g, '')
+          .replace(/^(.)/, ($1) => $1.toLowerCase())
+          .replace(/[\W_]+/g, '')
     }
   }
 }
