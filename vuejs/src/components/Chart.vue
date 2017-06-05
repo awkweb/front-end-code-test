@@ -8,10 +8,7 @@
           :style="getBarStyle(bar, index)"
           class="chart__bar"
         >
-          <span
-            :class="{ outside: (bar.value / total) < .25 }"
-            class="chart__bar__name"
-          >
+          <span class="chart__bar__name">
             {{ bar.name }}
           </span>
         </div>

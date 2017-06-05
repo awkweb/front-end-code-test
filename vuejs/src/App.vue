@@ -183,7 +183,7 @@ export default {
       const section = this.sections[sectionIndex]
       const fieldIndex = section.fields.findIndex(field => field.label === data.fieldLabel)
       const rangeMax = 2000
-      const randomAmount = Math.floor(Math.random() * (rangeMax - -rangeMax + 1)) + -rangeMax;
+      const randomAmount = Math.floor(Math.random() * (rangeMax + rangeMax + 1)) - rangeMax
       const field = this.sections[sectionIndex].fields[fieldIndex]
       const newValue = Math.max(this.toNumber(field.value) + randomAmount, 0)
       this.sections[sectionIndex].fields[fieldIndex].showRefresh = false

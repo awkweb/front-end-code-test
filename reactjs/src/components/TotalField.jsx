@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { formatValue } from '../utils'
 
 class NumberField extends Component {
   render () {
@@ -9,7 +10,7 @@ class NumberField extends Component {
         </label>
         
         <span className={`total__field__value ${this.props.grandTotal ? 'grand' : ''}`}>
-          ${ this.props.value }
+          ${formatValue(this.props.value)}
         </span>
       </div>
     );

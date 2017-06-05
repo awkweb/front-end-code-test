@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 import NumberField from './NumberField.jsx'
 import TotalField from './TotalField.jsx'
@@ -9,6 +9,7 @@ class FormSection extends Component {
       <NumberField
         key={field.label}
         label={field.label}
+        value={field.value}
         autofocus={field.autofocus}
         disabled={field.disabled}
         placeholder={field.placeholder}
@@ -16,10 +17,13 @@ class FormSection extends Component {
         showRefresh={field.showRefresh}
         triggerRefresh={field.triggerRefresh}
         type={field.type}
+        handleChange={this.handleChange.bind(this)}
+        handleTriggerRefresh={this.handleTriggerRefresh.bind(this)}
+        handleRefreshField={this.handleRefreshField.bind(this)}
       >
       </NumberField>
-    );
-  };
+    )
+  }
 
   renderTotal () {
     if (this.props.total) {
@@ -27,11 +31,24 @@ class FormSection extends Component {
         <TotalField
           label={this.props.total.label}
           value={this.props.total.value}
+          grandTotal={true}
         >
         </TotalField>
-      );
+      )
     }
-  };
+  }
+
+  handleChange (target) {
+    this.props.handleChange(target)
+  }
+
+  handleTriggerRefresh () {
+    this.props.handleTriggerRefresh()
+  }
+
+  handleRefreshField (name) {
+    this.props.handleRefreshField(name)
+  }
 
   render () {
     return (
@@ -44,8 +61,8 @@ class FormSection extends Component {
         { this.renderFields() }
         { this.renderTotal() }
       </section>
-    );
+    )
   }
 }
 
-export default FormSection;
+export default FormSection

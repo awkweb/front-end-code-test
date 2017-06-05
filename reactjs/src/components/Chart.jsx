@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
+import { nFormatter } from '../utils'
 
 class NumberField extends Component {
   state = {
     backgroundColors: ['#C4DBEE', '#9ACAE0', '#63AED4']
   };
 
-  getBarStyle (bar, index) {
-    const percent = (bar.value / this.total) * 100
+  getBarStyle = (bar, index) => {
+    const percent = (bar.value / this.props.total) * 100
     const height = Math.max(percent, 1)
     return {
       backgroundColor: this.state.backgroundColors[index],
@@ -19,6 +20,7 @@ class NumberField extends Component {
     if (bar.value > 0) {
       return (
         <div
+          key={bar.name}
           style={this.getBarStyle(bar, index)}
           className="chart__bar"
         >
@@ -49,7 +51,7 @@ class NumberField extends Component {
             { this.renderBars() }
 
             <div className="chart__y-label">
-              <span className="chart__y-label__value">${ this.props.total } per month</span>
+              <span className="chart__y-label__value">${nFormatter(this.props.total)} per month</span>
               <span className="chart__y-label__name">Retirement Income Goal</span>
             </div>
           </div>

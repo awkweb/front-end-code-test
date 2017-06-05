@@ -69,8 +69,7 @@ export default {
       if (!this.disabled) {
         this.active = true
         setTimeout(() => {
-          const input = this.$el.children[0].children[1]
-          input.focus()
+          this.$refs.input.focus()
         }, 0)
       }
     },
