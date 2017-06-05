@@ -1,0 +1,44 @@
+// Colors
+$blue: #0084FF;
+$palettes: (
+    black: (
+    	base: #333333
+    ),
+
+    blue: (
+        base: $blue,
+        dark: darken($blue, 10),
+        light: lighten($blue, 25),
+        x-dark: darken($blue, 20)
+    ),
+
+    gray: (
+        base: #888888,
+        dark: #555555,
+        light: #DDDDDD,
+        x-light: #F4F4F4,
+        border: #E6E6E6
+    ),
+
+    white: (
+        base: #ffffff,
+        dark: #F9F9F9
+    )
+);
+
+// Screen Sizes
+$screens: (
+    small: 320px,    
+    medium: 544px,
+    large: 801px,
+    larger: 953px,
+    x-large: 1280px
+);
+
+// Type
+$sans-serif: 'Avenir', 'Lato', sans-serif;
+
+// Misc
+$border-radius: 2px;
+$box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+$transition: .5s ease-in-out;

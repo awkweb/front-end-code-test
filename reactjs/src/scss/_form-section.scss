@@ -1,0 +1,21 @@
+@import 'scss/_variables.scss';
+@import 'scss/_functions.scss';
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+
+  &__title {
+    color: palette(black);
+    font: {
+      size: 1rem;
+      weight: 600;
+    }
+    margin-bottom: .5rem;
+
+    @media screen and (max-width: screen(medium)) {
+      font-size: .9rem;
+    }
+  }
+}

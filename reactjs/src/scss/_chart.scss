@@ -1,0 +1,108 @@
+.chart {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: 2rem;
+  position: relative;
+
+  @media screen and (max-width: screen(medium)) {
+    margin: 1rem;
+  }
+
+  &__container {
+    border-bottom: {
+      style: solid;
+      color: palette(gray, light);
+      width: 1px;
+    }
+    height: 100%;
+    width: 300px;
+
+    @media screen and (max-width: screen(large)) {
+      height: 400px;
+    }
+  }
+
+  &__bars {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+
+    @media screen and (max-width: screen(large)) {
+      height: 400px;
+    }
+  }
+
+  &__bar { 
+    align-items: center;
+    color: palette(black);
+    display: flex;
+    position: relative;
+    text-align: left;
+
+    &:first-child {
+      border-top-right-radius: $border-radius;
+      border-top-left-radius: $border-radius;
+    }
+
+    &__name {
+      font: {
+        family: $sans-serif;
+        size: .75rem;
+      }
+      position: absolute;
+      left: -9rem;
+      text-align: right;
+      width: 160px;
+
+      &:after {
+        content: '';
+        width: 20px;
+        border-bottom: {
+          color: palette(gray, dark);
+          style: solid;
+          width: 1px
+        }
+        position: absolute;
+        top: 50%;
+        margin-left: 5px;
+      }
+      
+      @media screen and (max-width: screen(medium)) {
+        font-size: .7rem;
+        left: -5.5rem;
+        width: 100px;
+      }
+    }
+  }
+
+  &__y-label {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: -11rem;
+    top: 40%;
+    width: 100%;
+
+    &__name {
+      font-size: .75rem;
+    }
+
+    @media screen and (max-width: screen(medium)) {      
+      right: -.2rem;
+      width: 30%;
+
+      &__name {
+        font-size: .7rem;
+      }
+    }
+  }
+
+  &__x-label {
+    font-size: .8rem;
+    padding: .5rem;
+  }
+}

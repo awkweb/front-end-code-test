@@ -1,0 +1,57 @@
+.total__field {
+  display: flex;
+  flex: 1;
+  margin-bottom: 10px;
+  padding: {
+    bottom: 2px;
+    right: 14px;
+    left: 14px;
+    top: 6px;
+  }
+
+  @media screen and (max-width: screen(small)) {
+    padding: {
+      right: 7px;
+      left: 7px;
+    }
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__label {
+    color: palette(black);
+    font: {
+      size: .8rem;
+      weight: 400;
+    }
+    flex: 7;
+
+    @media screen and (max-width: screen(small)) {
+      font-size: .75rem;
+    }
+  }
+
+  &__value {
+    background-color: transparent;
+    border: 0;
+    color: palette(black);
+    font: {
+      size: .8rem;
+      weight: 400;
+    }
+    flex: 3;
+    outline: 0;
+    padding: 0;
+    text-align: right;
+
+    @media screen and (max-width: screen(small)) {
+      font-size: .75rem;
+    }
+  }
+
+  .grand {
+    font-weight: 500;
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "reactjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
+    "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive",
+    "start-js": "react-scripts start",
+    "dev": "npm-run-all -p watch-css start-js",
+    "build": "npm run build-css && react-scripts build"
+  },
+  "dependencies": {
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
+  "devDependencies": {
+    "node-sass-chokidar": "0.0.2",
+    "npm-run-all": "^4.0.2",
+    "react-scripts": "1.0.7"
+  }
+}

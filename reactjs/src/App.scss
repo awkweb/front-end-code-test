@@ -1,0 +1,119 @@
+@import 'scss/_variables.scss';
+@import 'scss/_functions.scss';
+
+@import 'scss/_chart.scss';
+@import 'scss/_form-section.scss';
+@import 'scss/_number-field.scss';
+@import 'scss/_total-field.scss';
+
+html {
+  font: {
+    family: $sans-serif;
+    size: 20px;
+  }
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.app {
+  color: palette(black);
+  display: flex;
+  padding: {
+    left: 1rem;
+    right: 1rem;
+  }
+
+  @media screen and (max-width: screen(large)) {
+    flex-direction: column;
+  }
+}
+
+.app__form {
+  flex: 1;
+  padding: 2rem;
+
+  @media screen and (max-width: screen(larger)) {
+    padding: {
+      left: 0;
+      right: 0;
+    }
+  }
+
+  @media screen and (max-width: screen(large)) {
+    padding: {
+      bottom: .5rem;
+      left: 0;
+      right: 0;
+      top: 1rem;
+    }
+  }
+}
+
+.app__chart {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 2rem;
+
+  @media screen and (max-width: screen(large)) {
+    padding: {
+      bottom: .5rem;
+      left: 0;
+      right: 0;
+      top: .5rem;
+    }
+  }
+
+  &__header {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    font: {
+      size: 1rem;
+      weight: 600;
+    }
+    margin: {
+      top: 0;
+      bottom: 1.5rem;
+    }
+
+    @media screen and (max-width: screen(medium)) {
+      font-size: .9rem;
+    }
+  }
+
+  &__number {
+    color: palette(blue);
+    font: {
+      size: 4rem;
+      weight: 300;
+    }
+    position: relative;
+
+    @media screen and (max-width: screen(medium)) {
+      font-size: 3rem;
+    }
+
+    &:before {
+      color: palette(blue, light);
+      content: "$";
+      font-size: 2rem;
+      position: absolute;
+      left: -1.5rem;
+      top: 1rem;
+
+      @media screen and (max-width: screen(medium)) {
+        font-size: 1.6rem;
+        top: .75rem;
+      }
+    }
+  }
+}
