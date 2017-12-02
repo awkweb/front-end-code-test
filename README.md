@@ -1,10 +1,17 @@
-# Abaris Code Test
+# Fintech Front-End Code Test
 
-Abaris Code Test implemented in React & Vue.js.
+Code test for fintech startup implemented in React & Vue.js.
+
+![demo](demo.gif)
 
 To run either the React or Vue solution, `cd` into their respective directory (i.e. `cd reactjs`). Then run the following commands:
 
 ```bash
-$ npm install
-$ npm run dev
+$ yarn install
+$ yarn run dev
 ```
+
+## License
+
+Released under the MIT license. See [LICENSE](/LICENSE) for details.
+
